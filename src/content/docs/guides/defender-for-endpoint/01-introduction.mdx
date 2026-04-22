@@ -1,0 +1,64 @@
+---
+title: "Part 1 — Introduction and prerequisites"
+description: What Defender for Endpoint is, which licenses you need, and how to prepare your tenant before onboarding devices.
+sidebar:
+  label: 1. Introduction
+  order: 1
+tableOfContents:
+  minHeadingLevel: 2
+  maxHeadingLevel: 3
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+
+Microsoft Defender for Endpoint (MDE) is an enterprise endpoint detection and response platform. This first part of the series covers what MDE does, the licensing you need, and the checks to run before you onboard your first device.
+
+<Aside type="note">
+The table of contents on the right is generated automatically from the `##` and `###` headings on this page. Use it to skip ahead.
+</Aside>
+
+## What is Defender for Endpoint
+
+MDE combines behavioural sensors, a cloud analytics backend, and threat intelligence to deliver three core capabilities:
+
+- **Threat and vulnerability management** — continuous inventory and prioritised remediation.
+- **Attack surface reduction** — hardening rules that block common malware techniques.
+- **Endpoint detection and response** — alerts, timelines, and automated investigations.
+
+## Licensing prerequisites
+
+### Plan 1 vs Plan 2
+
+Defender for Endpoint is sold in two plans. Pick based on the capabilities you need:
+
+| Capability | Plan 1 | Plan 2 |
+| --- | :---: | :---: |
+| Next-generation antivirus | Yes | Yes |
+| Attack surface reduction | Yes | Yes |
+| Endpoint detection and response | No | Yes |
+| Automated investigation and response | No | Yes |
+| Threat and vulnerability management | No | Yes |
+
+### How licences are assigned
+
+Licences are assigned per user in Microsoft 365. Each licensed user can onboard up to a tenant-wide device limit, so you do not assign licences directly to devices.
+
+## Tenant prerequisites
+
+<Steps>
+
+1. Confirm the tenant has an active Microsoft 365 E5, E5 Security, or standalone Defender for Endpoint subscription.
+
+2. Verify the Security Administrator role is assigned to the account you will use during onboarding.
+
+3. Provision the Defender portal at [security.microsoft.com](https://security.microsoft.com) and accept the initial data-storage region prompt — this cannot be changed later.
+
+4. Review the network requirements and allowlist the Defender service URLs on any outbound proxy.
+
+</Steps>
+
+## What is next
+
+Part 2 covers onboarding Windows devices using Intune and Group Policy.
+
+→ [Part 2 — Onboarding Windows devices](/guides/defender-for-endpoint/02-onboarding/)

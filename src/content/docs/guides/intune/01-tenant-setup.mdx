@@ -1,0 +1,35 @@
+---
+title: "Part 1 — Tenant setup and enrollment"
+description: Configure an Intune tenant and enroll the first test device.
+sidebar:
+  label: 1. Tenant setup
+  order: 1
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+A short walkthrough to get the first device enrolled into Intune.
+
+## Prerequisites
+
+- A Microsoft 365 tenant with an Intune licence assigned to your admin account.
+- The Intune Administrator role.
+
+## Configure the MDM authority
+
+<Steps>
+
+1. Sign in to [intune.microsoft.com](https://intune.microsoft.com).
+2. Go to **Devices → Enroll devices → Automatic Enrollment**.
+3. Set **MDM user scope** to **All** (or a pilot group).
+4. Save.
+
+</Steps>
+
+## Enroll a test device
+
+On a Windows 11 device, open **Settings → Accounts → Access work or school → Connect**, sign in with a licensed user, and wait for enrollment to complete. The device should appear under **Devices → Windows** within a few minutes.
+
+## What is next
+
+→ [Part 2 — Compliance policies](/guides/intune/02-compliance/)

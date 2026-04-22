@@ -1,0 +1,32 @@
+---
+title: "Part 2 — Compliance policies"
+description: Create a baseline Intune compliance policy and assign it to your pilot group.
+sidebar:
+  label: 2. Compliance
+  order: 2
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+A compliance policy tells Intune what "healthy" looks like for a device. Combined with Conditional Access it gates access to corporate apps.
+
+## Create a baseline policy
+
+<Steps>
+
+1. In the Intune admin center, go to **Devices → Compliance policies → Create policy**.
+2. Choose **Windows 10 and later**.
+3. Configure these baseline settings:
+   - **BitLocker**: required
+   - **Secure Boot**: required
+   - **Minimum OS version**: set to the lowest build your org supports
+   - **Antivirus**: required
+4. Under **Actions for noncompliance**, mark the device noncompliant after one day.
+
+</Steps>
+
+## Assign and monitor
+
+Assign the policy to a pilot group first. Monitor **Devices → Monitor → Noncompliant devices** for at least a week before expanding the scope.
+
+← [Back to the series overview](/guides/intune/)
