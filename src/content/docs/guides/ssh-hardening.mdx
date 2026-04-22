@@ -1,0 +1,83 @@
+---
+title: Hardening SSH on a new Linux server
+description: A standalone how-to for locking down SSH on a freshly provisioned Linux server.
+sidebar:
+  label: SSH hardening
+tableOfContents:
+  minHeadingLevel: 2
+  maxHeadingLevel: 4
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+
+This is an example of a **standalone** guide — a single page that is not part of a series. The table of contents on the right is generated from the headings and uses `minHeadingLevel: 2` and `maxHeadingLevel: 4` from the frontmatter.
+
+## Before you start
+
+You will need:
+
+- Root or sudo access to the server.
+- An SSH key pair on your workstation.
+
+## Create an admin user
+
+<Steps>
+
+1. Create a new user and add them to the sudo group:
+
+   ```bash
+   adduser deploy
+   usermod -aG sudo deploy
+   ```
+
+2. Copy your public key into the new user's `authorized_keys`:
+
+   ```bash
+   mkdir -p /home/deploy/.ssh
+   cp ~/.ssh/authorized_keys /home/deploy/.ssh/authorized_keys
+   chown -R deploy:deploy /home/deploy/.ssh
+   chmod 700 /home/deploy/.ssh
+   chmod 600 /home/deploy/.ssh/authorized_keys
+   ```
+
+</Steps>
+
+## Lock down `sshd_config`
+
+### Disable root login
+
+Edit `/etc/ssh/sshd_config` and set:
+
+```text
+PermitRootLogin no
+```
+
+### Disable password authentication
+
+```text
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+UsePAM yes
+```
+
+<Aside type="caution">
+Test your key-based login in a **second** terminal before closing your current root session. If key login fails, keep the root session open and revert the change.
+</Aside>
+
+### Restrict allowed users
+
+```text
+AllowUsers deploy
+```
+
+## Reload and verify
+
+```bash
+systemctl reload ssh
+```
+
+From a second terminal, confirm `ssh deploy@server` works and `ssh root@server` is rejected.
+
+## Optional: add fail2ban
+
+For extra protection against brute-force attempts, install fail2ban and enable the `sshd` jail. This is outside the minimum baseline but recommended for any internet-facing host.

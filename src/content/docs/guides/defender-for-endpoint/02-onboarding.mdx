@@ -1,0 +1,98 @@
+---
+title: "Part 2 — Onboarding Windows devices"
+description: Step-by-step guide to onboarding Windows 10 and 11 devices to Defender for Endpoint using Intune and Group Policy.
+sidebar:
+  label: 2. Onboarding
+  order: 2
+tableOfContents:
+  minHeadingLevel: 2
+  maxHeadingLevel: 3
+---
+
+import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+With licensing and the tenant in place from [Part 1](/guides/defender-for-endpoint/01-introduction/), the next step is getting the Defender sensor running on your Windows fleet. This part covers the two most common onboarding methods.
+
+## Choose an onboarding method
+
+Pick whichever channel already manages your endpoints:
+
+- **Intune** — recommended for cloud-managed devices.
+- **Group Policy** — use when devices are domain-joined and managed by on-prem AD.
+- **Local script** — fine for pilots and lab testing, not for production rollouts.
+
+## Download the onboarding package
+
+<Steps>
+
+1. Sign in to [security.microsoft.com](https://security.microsoft.com).
+2. Go to **Settings → Endpoints → Onboarding**.
+3. Set the operating system to **Windows 10 and 11**.
+4. Pick the deployment method that matches your channel and download the package.
+
+</Steps>
+
+<Aside type="caution">
+The onboarding package contains a tenant-specific token. Treat it as sensitive — do not commit it to source control and do not share it outside the deployment team.
+</Aside>
+
+## Deploy the package
+
+<Tabs>
+<TabItem label="Intune">
+
+1. In the Intune admin center, go to **Endpoint security → Endpoint detection and response**.
+2. Create a new policy for the **Windows** platform using the **Endpoint detection and response (MDM)** profile.
+3. Upload the onboarding blob from the downloaded package.
+4. Assign the policy to your pilot device group and save.
+
+Devices typically check in within an hour and report to the Defender portal shortly after.
+
+</TabItem>
+<TabItem label="Group Policy">
+
+1. Extract the onboarding package on a management server.
+2. Copy `WindowsDefenderATPOnboardingScript.cmd` to a network share readable by the target computers.
+3. Create a GPO that runs the script at **Computer Configuration → Preferences → Control Panel Settings → Scheduled Tasks**.
+4. Scope the GPO to an OU containing a small pilot group first.
+
+</TabItem>
+<TabItem label="Local script">
+
+Useful for a single lab device:
+
+```powershell
+# Run as Administrator from the extracted package folder
+.\WindowsDefenderATPLocalOnboardingScript.cmd
+```
+
+</TabItem>
+</Tabs>
+
+## Verify the device appears in the portal
+
+Run the detection test on an onboarded machine to confirm telemetry is flowing.
+
+```powershell
+# From an elevated PowerShell prompt
+powershell.exe -NoExit -ExecutionPolicy Bypass -WindowStyle Hidden `
+  $ErrorActionPreference = 'silentlycontinue'; `
+  (New-Object System.Net.WebClient).DownloadFile('http://127.0.0.1/1.exe', `
+  'C:\\test-MDATP-test\\invoice.exe'); Start-Process 'C:\\test-MDATP-test\\invoice.exe'
+```
+
+Within about ten minutes an alert titled *Suspicious PowerShell command line* should appear in the Defender portal. If it does not, re-check the onboarding package was applied and that the device can reach the Defender service URLs.
+
+## Troubleshooting quick reference
+
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| Device missing from portal | Package not applied | Re-run the onboarding script with admin rights |
+| Device present, no alerts | Outbound URLs blocked | Allow Defender URLs on the proxy |
+| "Inactive" status after 7 days | Sensor stopped | Restart `Sense` and `WinDefend` services |
+
+## What is next
+
+Part 3 enables the attack surface reduction rules that give you immediate protective value.
+
+→ [Part 3 — Attack surface reduction rules](/guides/defender-for-endpoint/03-asr-rules/)
